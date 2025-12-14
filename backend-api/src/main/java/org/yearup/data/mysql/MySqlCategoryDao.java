@@ -28,7 +28,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 
         // get all categories
         List<Category> allCategories = new ArrayList<>();
-        String sql = "SELECT * FROM categories";
+        String sql = "SELECT * FROM categories;";
 
         try(Connection conn = getConnection()){
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -47,7 +47,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     @Override
     public Category getById(int categoryId)
     {
-        String sql = "SELECT * FROM categories WHERE category_id = ?";
+        String sql = "SELECT * FROM categories WHERE category_id = ?;";
 
         try (Connection conn = getConnection()){
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -69,7 +69,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     {
         // create a new category
 
-        String sql = "INSERT INTO category(category_id, name, description)" + " VALUES (?, ?, ?)";
+        String sql = "INSERT INTO category(category_id, name, description)" + " VALUES (?, ?, ?);";
 
         try (Connection conn = getConnection()){
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -100,7 +100,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         String sql = "UPDATE categories" +
                 "SET  name = ? " +
                 " , description = ? " +
-                "WHERE category_id = ?";
+                "WHERE category_id = ?;";
 
         try (Connection conn = getConnection()){
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -118,7 +118,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         // delete category
 
         String sql = "DELETE FROM categories " +
-                "WHERE category_id = ?";
+                "WHERE category_id = ?;";
 
         try(Connection conn = getConnection()){
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
