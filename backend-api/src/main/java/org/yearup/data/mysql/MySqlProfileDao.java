@@ -1,6 +1,8 @@
 package org.yearup.data.mysql;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.yearup.data.UserDao;
 import org.yearup.models.Profile;
 import org.yearup.data.ProfileDao;
 
@@ -10,6 +12,9 @@ import java.sql.*;
 @Component
 public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
 {
+    private UserDao userDao;
+    private ProfileDao profileDao;
+
     public MySqlProfileDao(DataSource dataSource)
     {
         super(dataSource);
@@ -42,6 +47,61 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
         {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Profile getByUserId(int userId) {
+        String sql = "SELECT * FROM profiles WHERE user_id = ?";
+
+        try(Connection conn = getConnection()){
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setInt(1, userId);
+            ResultSet results = preparedStatement.executeQuery();
+            if (results.next()){
+                return mapProfileToRow(results);
+            }
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    @Override
+    public Profile updateProfile(Profile profile) {
+        String sql = "UPDATE profiles " +
+                "SET first_name = ?, last_name = ?, phone = ?, email = ?, address = ?, city = ?, state = ?, zip = ? WHERE user_id = ?";
+
+        try (Connection conn = getConnection()){
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, profile.getFirstName());
+            preparedStatement.setString(2, profile.getLastName());
+            preparedStatement.setString(3, profile.getPhone());
+            preparedStatement.setString(4, profile.getEmail());
+            preparedStatement.setString(5, profile.getAddress());
+            preparedStatement.setString(6, profile.getCity());
+            preparedStatement.setString(7, profile.getState());
+            preparedStatement.setString(8, profile.getZip());
+            preparedStatement.setInt(9, profile.getUserId());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return profile;
+    }
+
+    private Profile mapProfileToRow(ResultSet results) throws SQLException{
+        int userId = results.getInt("user_id");
+        String firstName  = results.getString("first_name");
+        String lastName = results.getString("last_name");
+        String phone = results.getString("phone");
+        String email = results.getString("email");
+        String address = results.getString("address");
+        String city = results.getString("city");
+        String state = results.getString("state");
+        String zip = results.getString("zip");
+        return new Profile(userId, firstName, lastName, phone, email, address, city, state, zip);
     }
 
 }

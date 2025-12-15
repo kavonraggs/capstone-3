@@ -2,7 +2,6 @@ package org.yearup.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.ProductDao;
@@ -78,7 +77,7 @@ public class ShoppingCartController
         String username = principal.getName();
         User user = userDao.getByUserName(username);
         int userId = user.getId();
-        shoppingCartDao.updateQuantity(userId, shoppingCartDao.getItem(userId, productId), item.getQuantity() + 1);
+        shoppingCartDao.incrementQuantity(userId, shoppingCartDao.getItem(userId, productId));
     }
 
 
