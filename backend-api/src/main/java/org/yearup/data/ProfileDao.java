@@ -1,7 +1,5 @@
 package org.yearup.data;
 
-
-import org.springframework.web.bind.annotation.RequestBody;
 import org.yearup.models.Profile;
 
 public interface ProfileDao {
