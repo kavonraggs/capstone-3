@@ -1,8 +1,6 @@
 package org.yearup.data.mysql;
 
 import org.yearup.data.OrderDao;
-import org.yearup.data.UserDao;
-
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -13,7 +11,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
 
     @Override
     public int createOrder(int userId) {
-        String sql = "INSERT INTO orders(user_id, date) " +
+        String sql = "INSERT INTO orders(user_id, 'date') " +
                 " VALUES (?,?)";
 
         try (Connection conn = getConnection();
@@ -29,9 +27,10 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                 return keys.getInt(1);
             }
 
+            throw new RuntimeException("Could not create order");
+
             }catch (SQLException e){
             throw new RuntimeException(e);
         }
-        return 0;
     }
 }
