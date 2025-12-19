@@ -161,8 +161,6 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         }
     }
 
-
-
     protected ShoppingCartItem mapItemRow(ResultSet row) throws SQLException
     {
         int quantity = row.getInt("quantity");
