@@ -20,8 +20,7 @@ import java.util.List;
 @RestController
 @PreAuthorize("isAuthenticated()")
 @RequestMapping("/cart")
-public class ShoppingCartController
-{
+public class ShoppingCartController {
     // a shopping cart requires
     private ShoppingCartDao shoppingCartDao;
     private UserDao userDao;
@@ -35,10 +34,8 @@ public class ShoppingCartController
 
     @GetMapping
     // each method in this controller requires a Principal object as a parameter
-    public ShoppingCart getCart(Principal principal)
-    {
-        try
-        {
+    public ShoppingCart getCart(Principal principal) {
+        try {
             // get the currently logged in username
             String userName = principal.getName();
             // find database user by userId
@@ -48,13 +45,11 @@ public class ShoppingCartController
             // use the shoppingcartDao to get all items in the cart and return the cart
             List<ShoppingCartItem> items = shoppingCartDao.getByUserId(userId);
             ShoppingCart cart = new ShoppingCart();
-            for (ShoppingCartItem item: items){
+            for (ShoppingCartItem item : items) {
                 cart.add(item);
             }
             return cart;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
         }
     }
@@ -62,11 +57,19 @@ public class ShoppingCartController
     // add a POST method to add a product to the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
     @PostMapping("/products/{productId}")
-    public void addToCart(@PathVariable int productId,
-                          Principal principal){
+    public ShoppingCart addToCart(@PathVariable int productId,
+                                  Principal principal) {
         int userId = getUserById(principal);
         shoppingCartDao.addOrIncrementItem(userId, productId);
+
+        List<ShoppingCartItem> items = shoppingCartDao.getByUserId(userId);
+        ShoppingCart cart = new ShoppingCart();
+        for (ShoppingCartItem item : items) {
+            cart.add(item);
+        }
+        return cart;
     }
+
 
     // add a PUT method to update an existing product in the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be updated)

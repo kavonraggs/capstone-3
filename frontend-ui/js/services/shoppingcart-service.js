@@ -12,7 +12,7 @@ class ShoppingCartService {
         const url = `${config.baseUrl}/cart/products/${productId}`;
         const headers = userService.getHeaders();
 
-        axios.post(url, {}) ,{headers})
+        axios.post(url, {} ,{headers})
             .then(response => {
                 this.setCart(response.data)
 
@@ -47,6 +47,7 @@ class ShoppingCartService {
     {
 
         const url = `${config.baseUrl}/cart`;
+        const headers = userService.getHeaders();
 
         axios.get(url, { headers })
             .then(response => {
@@ -56,12 +57,14 @@ class ShoppingCartService {
 
             })
             .catch(error => {
+            this.cart = {items : [], total: 0};
+            this.updateCartDisplay();
 
-                const data = {
-                    error: "Load cart failed."
-                };
-
-                templateBuilder.append("error", data, "errors")
+//                const data = {
+//                    error: "Load cart failed."
+//                };
+//
+//                templateBuilder.append("error", data, "errors")
             })
 
     }
@@ -71,7 +74,7 @@ class ShoppingCartService {
         templateBuilder.build("cart", this.cart, "main");
 
         const main = document.getElementById("main")
-        main.innerHTML = "";
+//        main.innerHTML = "";
 
         let div = document.createElement("div");
         div.classList="filter-box";
@@ -100,7 +103,7 @@ class ShoppingCartService {
 
         let parent = document.getElementById("cart-item-list");
         this.cart.items.forEach(item => {
-            this.buildItem(item, contentDiv)
+            this.buildItem(item, parent)
         });
     }
 
@@ -145,22 +148,24 @@ class ShoppingCartService {
     {
 
         const url = `${config.baseUrl}/cart`;
+                const headers = userService.getHeaders();
 
         axios.delete(url, { headers})
              .then(response => {
                  this.cart = {
                      items: [],
                      total: 0
-                 }
+                 };
 
-                 this.cart.total = response.data.total;
-
-                 for (const [key, value] of Object.entries(response.data.items)) {
-                     this.cart.items.push(value);
-                 }
-
-                 this.updateCartDisplay()
+                this.updateCartDisplay()
                  this.loadCartPage()
+
+                // this.cart.total = response.data.total;
+
+//                 for (const [key, value] of Object.entries(response.data.items)) {
+//                     this.cart.items.push(value);
+//                 }
+
 
              })
              .catch(error => {
