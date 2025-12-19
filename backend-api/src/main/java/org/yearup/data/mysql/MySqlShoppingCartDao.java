@@ -1,5 +1,6 @@
 package org.yearup.data.mysql;
 
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.stereotype.Component;
 import org.yearup.data.ProductDao;
 import org.yearup.data.ShoppingCartDao;
@@ -36,7 +37,9 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
            while (results.next()){
                 ShoppingCartItem item = mapItemRow(results);
-                itemList.add(item);
+                if (item != null) {
+                    itemList.add(item);
+                }
             }
         } catch (SQLException e){
             throw new RuntimeException(e);
@@ -114,6 +117,22 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     }
 
     @Override
+    public void updateQuantity(int userId, int productId, int quantity) {
+        String sql = "UPDATE shopping_cart " +
+                "SET quantity = ? " +
+                "WHERE user_id = ? AND product_id = ?";
+
+        try(Connection conn = getConnection()){
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setInt(1, quantity);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.setInt(3, productId);
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void deleteItem(int userId, int productId) {
         String sql = "DELETE FROM shopping_cart " +
                 "WHERE user_id = ? AND product_id = ?";
@@ -142,6 +161,8 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         }
     }
 
+
+
     protected ShoppingCartItem mapItemRow(ResultSet row) throws SQLException
     {
         int quantity = row.getInt("quantity");
@@ -150,6 +171,10 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         Product product = productDao.getById(row.getInt("product_id"));
         item.setQuantity(quantity);
         item.setProduct(product);
+
+        if (product == null){
+            return null;
+        }
 
         return item;
     }

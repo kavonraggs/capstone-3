@@ -13,6 +13,7 @@ public interface ShoppingCartDao
     void addItem(int userId, int productId);
     void addOrIncrementItem(int userId, int productId);
     void incrementQuantity(int userId, ShoppingCartItem shoppingCartItem);
+    void updateQuantity(int userId, int productId, int quantity);
     void deleteItem(int userId, int productId);
     void deleteCart(int userId);
 }

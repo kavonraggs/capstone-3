@@ -16,6 +16,7 @@ import java.util.List;
 
 // convert this class to a REST controller
 // only logged in users should have access to these actions
+
 @RestController
 @PreAuthorize("isAuthenticated()")
 @RequestMapping("/cart")
@@ -64,7 +65,7 @@ public class ShoppingCartController
     public void addToCart(@PathVariable int productId,
                           Principal principal){
         int userId = getUserById(principal);
-        shoppingCartDao.addItem(userId, productId);
+        shoppingCartDao.addOrIncrementItem(userId, productId);
     }
 
     // add a PUT method to update an existing product in the cart - the url should be
@@ -77,7 +78,12 @@ public class ShoppingCartController
         String username = principal.getName();
         User user = userDao.getByUserName(username);
         int userId = user.getId();
-        shoppingCartDao.incrementQuantity(userId, shoppingCartDao.getItem(userId, productId));
+
+        if (item.getQuantity() <= 0 ) {
+            shoppingCartDao.deleteItem(userId, productId);
+        } else {
+            shoppingCartDao.updateQuantity(userId, productId, item.getQuantity());
+        }
     }
 
 
@@ -85,7 +91,7 @@ public class ShoppingCartController
 
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
-    @DeleteMapping("/cart")
+    @DeleteMapping
     public void deleteProductFromCart(Principal principal){
         int userId = getUserById(principal);
         shoppingCartDao.deleteCart(userId);
