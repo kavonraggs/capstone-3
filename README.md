@@ -53,10 +53,25 @@ Kavon Raggs
 
 # Interesting piece of code
 ```public class MySqlOrderLineItemDao extends MySqlDaoBase implements OrderLineItemDao```
-- This code is interesting to me because in each SQL DAO we have a base interface to what each DAO needs to do and another one to define how it does it
+- This code is interesting to me because in each SQL DAO we have a base interface that set what each DAO needs to do and another one to define how it does it
 - Shows difference between implements and extends 
 - extends: is-a / is a type of
 - implements: follows a contract / structure
+
+``` @Override
+    public void addOrIncrementItem(int userId, int productId) {
+        ShoppingCartItem item = getItem(userId, productId);
+
+        if (item == null){
+            addItem(userId,productId);
+        }
+        else {
+            incrementQuantity(userId, item);
+        }
+    }```
+
+- if item is not in cart, add it. If it is, increase quantity
+
 
 
 
